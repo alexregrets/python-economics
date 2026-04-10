@@ -27,7 +27,7 @@ df = pd.DataFrame(data)
 print(df.head())
 print(df.info())
 
-X = sm.add_constant(df[["X1","X2","X3","X4","X5"]])
+X = sm.add_constant(df[["X1","X2","X3", "X4","X5"]])
 model = sm.OLS(df["Y"], X).fit()
 print(model.summary())
 
@@ -43,3 +43,23 @@ plt.hist(resid, bins=8, edgecolor='black')
 plt.xlabel('Остатки')
 plt.ylabel('Частота')
 plt.show()
+
+
+
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+
+
+X_vif = df[["X1", "X2", "X3", "X4", "X5"]]
+vif_data = pd.DataFrame()
+vif_data["Переменная"] = X_vif.columns
+vif_data["VIF"] = [variance_inflation_factor(X_vif.values, i) 
+                   for i in range(X_vif.shape[1])]
+print(vif_data)
+
+stat, p = stats.shapiro(resid)
+print(f"Статистика Шапиро-Уилка: {stat}, p-значение: {p}")
+if p >0.05:
+       print("Остатки распределены нормально (не отвергаем H0)")
+else:      
+       print("Остатки не распределены нормально (отвергаем H0)")
